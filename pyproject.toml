@@ -1,0 +1,25 @@
+[project]
+name = "gamemaster"
+version = "0.1.0"
+description = "Runs the annual Game Master party: the hat, the teams, the score. TV + phones over local Wi-Fi."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "segno>=1.6",
+    "pyyaml>=6.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "httpx>=0.27",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

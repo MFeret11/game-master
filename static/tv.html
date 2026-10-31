@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Game Master · TV</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script type="module" src="/static/tv.js"></script>
+</head>
+<body>
+  <div class="banner" id="banner">Lost the server. Reconnecting…</div>
+  <main class="tv">
+    <header class="tv-head">
+      <h1 class="tv-title" id="title">Game Master</h1>
+      <div class="tv-sub" id="sub">The lobby is open</div>
+    </header>
+
+    <section class="tv-main">
+      <div class="card join-card">
+        <h2>Scan to join</h2>
+        <div class="qr"><img id="qr" alt="QR code to join the party"></div>
+        <div class="join-url" id="join-url"></div>
+        <div class="room-code" id="room-code" aria-label="Room code"></div>
+      </div>
+
+      <div class="card who">
+        <h2>Who's here <span class="who-count" id="count"></span></h2>
+        <div class="chips" id="chips"></div>
+      </div>
+    </section>
+
+    <footer class="ticker" id="ticker"></footer>
+  </main>
+</body>
+</html>

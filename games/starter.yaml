@@ -1,0 +1,174 @@
+# Game Master starter library (SPEC §5.2).
+#
+# Generic party games to get going. Your group's own list goes in
+# data/games.yaml (same format, never committed); if that file exists, it's
+# used instead of this one on first start.
+#
+# Check a file:  uv run python -m gamemaster.library check games/starter.yaml
+#
+# Fields
+#   name        Shown on the TV.
+#   rules       One-line reminder, shown on the TV when the game is drawn.
+#   decided_by  played  - the players report who won
+#               judged  - performed at the end-of-round showcase, everyone else votes
+#               room    - the room shouts it out, anyone taps the winner
+#   energy      hype | medium | chill   (for the night's setlist)
+#   size        big (team vs team, room split) | small (1v1, 2v2, groups, free-for-all)
+#   showdown    true if it's a good final-showdown game
+#   formats     Which matchups the game allows. kind is one of:
+#                 nvn        1v1, 2v2, ... per_side: [min, max] players per side
+#                 split      the whole room splits into sides
+#                 team       the night's teams, head to head
+#                 all_teams  every team at once
+#                 ffa        free-for-all
+#                 creative   everyone (or every team) enters, judged
+#               players: [min, max] limits the whole game (only 8 balloons, ...)
+#   versions    Rule versions. The one marked default (or the first) is used
+#               unless someone switches it. Non-drinking goes first.
+
+- name: Flip Cup
+  rules: Drink your cup, then flip it from the table edge until it lands upside down. Next teammate goes.
+  energy: hype
+  size: big
+  showdown: true
+  formats:
+    - kind: team
+    - kind: split
+    - kind: nvn
+      per_side: [1, 4]
+  versions:
+    - name: Water
+      rules: Cups of water (or anything non-alcoholic).
+      default: true
+    - name: Classic
+      rules: Beer, the old way.
+  notes: The default setlist pins this as the round 1 opener.
+
+- name: Cup Pong
+  rules: Take turns throwing ping pong balls into the other side's cups. First to clear the other side wins.
+  energy: hype
+  size: small
+  formats:
+    - kind: nvn
+      per_side: [1, 2]
+    - kind: team
+    - kind: split
+  versions:
+    - name: Water
+      rules: Water in the cups. Sink one and the other side removes it.
+      default: true
+    - name: Classic
+      rules: Beer in the cups.
+
+- name: Pass the Orange
+  rules: Pass an orange down the line chin to neck. No hands. Drop it and it goes back to the start.
+  energy: hype
+  size: big
+  formats:
+    - kind: team
+    - kind: split
+
+- name: Balloon Stomp
+  rules: Everyone ties a balloon to their ankle. Pop the others, protect yours. Last balloon standing wins.
+  energy: hype
+  size: small
+  showdown: true
+  formats:
+    - kind: ffa
+      players: [3, 20]
+    - kind: nvn
+      per_side: [1, 1]
+
+- name: Junk in the Trunk
+  rules: A tissue box full of ping pong balls is strapped to your back. Shake them all out. No hands.
+  energy: hype
+  size: small
+  showdown: true
+  formats:
+    - kind: nvn
+      per_side: [1, 1]
+    - kind: ffa
+      players: [3, 6]
+
+- name: Perfection
+  rules: Fit every shape into the board before it pops. Take turns. Finish faster, or get more pieces in before the pop.
+  energy: medium
+  size: small
+  showdown: true
+  formats:
+    - kind: nvn
+      per_side: [1, 1]
+    - kind: ffa
+      players: [3, 6]
+
+- name: Kids' Puzzle Race
+  rules: A big children's floor puzzle, about 20 pieces, two minutes. Finish first, or have the most pieces placed at the buzzer.
+  energy: medium
+  size: small
+  formats:
+    - kind: nvn
+      per_side: [1, 3]
+
+- name: Charades
+  rules: Act it out, no talking. Your team guesses. Most correct in the time limit wins.
+  energy: medium
+  size: big
+  formats:
+    - kind: team
+    - kind: split
+
+- name: Coin Flip
+  rules: Best of five. Call it in the air.
+  energy: chill
+  size: small
+  formats:
+    - kind: nvn
+      per_side: [1, 1]
+
+- name: Blind Portrait
+  rules: Draw your opponent without looking at the paper. Two minutes. The room votes at the showcase.
+  decided_by: judged
+  energy: chill
+  size: small
+  formats:
+    - kind: nvn
+      per_side: [1, 1]
+
+- name: Short Story
+  rules: Write a short story in ten minutes, then read it out loud at the showcase.
+  decided_by: judged
+  energy: chill
+  size: small
+  formats:
+    - kind: nvn
+      per_side: [1, 1]
+    - kind: creative
+
+- name: Poem
+  rules: Write a poem in ten minutes, then perform it at the showcase.
+  decided_by: judged
+  energy: chill
+  size: small
+  formats:
+    - kind: nvn
+      per_side: [1, 2]
+    - kind: creative
+
+- name: Self-Portrait
+  rules: Draw yourself in five minutes. Unveil it at the showcase.
+  decided_by: judged
+  energy: chill
+  size: small
+  formats:
+    - kind: nvn
+      per_side: [1, 1]
+    - kind: creative
+
+- name: Rap Battle
+  rules: Thirty seconds each, two rounds, no prep. The room votes.
+  decided_by: judged
+  energy: hype
+  size: small
+  formats:
+    - kind: nvn
+      per_side: [1, 1]

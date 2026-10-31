@@ -1,0 +1,159 @@
+/* Game Master: shared styles for the TV and the phones.
+   Dark on purpose: it's a party, at night, on a TV. No web fonts, because the
+   party has no internet. */
+
+:root {
+  --bg: #0e0f1f;
+  --bg-glow: #23184a;
+  --surface: #1a1c35;
+  --surface-2: #25284a;
+  --line: #34386a;
+  --text: #f6f4ff;
+  --muted: #a7a5cc;
+  --gold: #ffc83d;
+  --coral: #ff5d73;
+  --mint: #3ddc97;
+  --sky: #5cc8ff;
+  --radius: 18px;
+  --font: "Avenir Next", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  --display: "Avenir Next Condensed", "Arial Narrow", var(--font);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; height: 100%; }
+
+body {
+  background: radial-gradient(120% 90% at 50% -10%, var(--bg-glow), var(--bg) 60%) fixed, var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input { font: inherit; color: inherit; }
+
+/* Connection banner, shared ------------------------------------------------ */
+
+.banner {
+  position: fixed; inset: 0 0 auto 0; z-index: 10;
+  padding: .6em 1em; text-align: center; font-weight: 600;
+  background: var(--coral); color: #1a0710;
+  transform: translateY(-100%); transition: transform .25s ease;
+}
+.banner.show { transform: none; }
+
+/* TV ---------------------------------------------------------------------- */
+
+.tv {
+  height: 100vh; overflow: hidden;
+  display: grid; grid-template-rows: auto 1fr auto; gap: 3vh;
+  padding: 4vh 4vw;
+  font-size: 2.2vh;
+}
+
+.tv-head { display: flex; align-items: baseline; justify-content: space-between; gap: 2vw; }
+.tv-title {
+  margin: 0; font-family: var(--display); font-weight: 800; letter-spacing: .02em;
+  font-size: 9vh; line-height: 1; text-transform: uppercase;
+  background: linear-gradient(90deg, var(--gold), var(--coral));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.tv-sub { color: var(--muted); font-size: 3vh; font-weight: 600; }
+
+.tv-main { display: grid; grid-template-columns: minmax(0, 34fr) minmax(0, 66fr); gap: 3vw; min-height: 0; }
+
+.card {
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 3vh 2.4vw; min-height: 0;
+}
+.card h2 { margin: 0 0 2vh; font-size: 3.2vh; color: var(--muted); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+
+.join-card { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 2.4vh; }
+.qr { width: min(42vh, 100%); aspect-ratio: 1; background: #fff; border-radius: 14px; padding: 1.2vh; }
+.qr img { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+.join-url { font-size: 2.6vh; color: var(--muted); word-break: break-all; }
+.room-code { display: flex; gap: 1vh; }
+.room-code span {
+  display: grid; place-items: center; width: 7.5vh; height: 9vh;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px;
+  font-family: var(--display); font-size: 6vh; font-weight: 800; color: var(--gold);
+}
+
+.who { display: flex; flex-direction: column; }
+.who-count { color: var(--gold); }
+.chips { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 1.4vh; overflow: hidden; }
+.chip {
+  padding: 1.1vh 2.2vh; border-radius: 999px;
+  background: var(--surface-2); border: 1px solid var(--line);
+  font-size: 3.4vh; font-weight: 700;
+}
+.chip.new { animation: pop .6s cubic-bezier(.2, 1.6, .4, 1); border-color: var(--gold); }
+.chip.out { opacity: .45; }
+.empty { color: var(--muted); font-size: 3vh; }
+
+@keyframes pop {
+  from { transform: scale(.4); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+.ticker { display: flex; gap: 2vw; align-items: center; color: var(--muted); font-size: 2.6vh; white-space: nowrap; overflow: hidden; }
+.ticker b { color: var(--text); font-weight: 600; }
+.ticker .latest { color: var(--text); }
+.ticker .sep { opacity: .4; }
+
+/* Phone ------------------------------------------------------------------- */
+
+.phone {
+  max-width: 440px; margin: 0 auto; min-height: 100%;
+  padding: calc(env(safe-area-inset-top) + 28px) 20px 40px;
+  display: flex; flex-direction: column; gap: 22px;
+  font-size: 18px;
+}
+.brand {
+  margin: 0; font-family: var(--display); font-weight: 800; font-size: 34px; text-transform: uppercase; letter-spacing: .02em;
+  background: linear-gradient(90deg, var(--gold), var(--coral));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.lede { margin: 0; color: var(--muted); }
+
+form, .stack { display: flex; flex-direction: column; gap: 14px; }
+label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; color: var(--muted); font-size: 15px; }
+input {
+  padding: 14px 16px; font-size: 20px; border-radius: 14px;
+  background: var(--surface); border: 1px solid var(--line); color: var(--text);
+}
+input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+input.code { text-transform: uppercase; letter-spacing: .3em; font-weight: 700; }
+
+.btn {
+  padding: 16px 18px; border-radius: 14px; border: 0; cursor: pointer;
+  background: var(--gold); color: #1d1400; font-weight: 800; font-size: 19px;
+}
+.btn:disabled { opacity: .6; }
+.btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); font-weight: 600; }
+.link { background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 6px; align-self: center; font-size: 15px; }
+
+.error { color: var(--coral); font-weight: 600; margin: 0; }
+.note { color: var(--muted); font-size: 15px; margin: 0; }
+
+.names { display: flex; flex-wrap: wrap; gap: 10px; }
+.names button {
+  padding: 10px 16px; border-radius: 999px; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--line); font-weight: 600;
+}
+
+.hero {
+  text-align: center; padding: 36px 16px; border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--line);
+}
+.hero .big { font-size: 40px; font-weight: 800; margin: 6px 0; word-break: break-word; }
+.hero .muted { color: var(--muted); }
+
+hr { border: 0; border-top: 1px solid var(--line); width: 100%; margin: 4px 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .chip.new { animation: none; }
+  .banner { transition: none; }
+}

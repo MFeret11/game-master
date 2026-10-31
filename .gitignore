@@ -1,0 +1,16 @@
+# Party data: real names, scores, your own game list. Never committed.
+data/
+
+# Secrets (the Anthropic API key for Jeopardy boards)
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
