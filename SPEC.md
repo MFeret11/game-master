@@ -329,7 +329,7 @@ SQLite, one file on the laptop (`data/gamemaster.db`, gitignored). Schema change
 | **M1** | The core night: draft, flag ceremony, setlist and rounds (challenges, fill, review), final showdown, hat, teams, games at the same time, phone reporting with disputes, voting on judged games, going to bed, scoring, TV scoreboard, party controls, the final crown. | A full fake party (§8) runs clean, and a short real test with a few phones works. |
 | **M2** | Jeopardy: board maker, checker, TV board, play flow, Daily Double, Final Jeopardy. | Two generated boards played end to end. |
 | **M3** | Polish: picks and the Best guesser board, Mario Party board look for the scoreboard, theme colors, sounds. | It looks like a party, not a spreadsheet. |
-| **M4** | Portfolio: README with screenshots, a demo mode with simulated players for mferet.com, CI. | Recruiters can see it working without a party. |
+| **M4** | Showcase: README with screenshots, a demo mode with simulated players for mferet.com, CI. | Anyone can see it working without a party. |
 | **Later** | Phone buzzers for Jeopardy (first-in with lockout), other trivia formats, a bracket for 1v1 tournaments. | |
 
 **For this year's party** (date not set yet): M0 + M1 are the must-haves. M2 if time allows. M3 can grow every year.
