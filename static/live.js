@@ -30,6 +30,13 @@ export class Live {
     window.addEventListener("pageshow", wake);
   }
 
+  // Send a message now. Returns false when offline (nothing is queued).
+  send(message) {
+    if (!this.isOpen()) return false;
+    this.ws.send(JSON.stringify(message));
+    return true;
+  }
+
   isOpen() {
     return this.ws && this.ws.readyState === WebSocket.OPEN;
   }

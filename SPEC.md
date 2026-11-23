@@ -1,6 +1,6 @@
 # Game Master — Spec
 
-Status: M0 built 2026-10-31 (TV lobby, joining, reconnecting, restart-safe database, game library loader, starter list). Planning continues; M1 not started. Replaces the 2019 AWS CodeStar template that was in this repo.
+Status: M0 built 2026-10-31 (TV lobby, joining, reconnecting, restart-safe database, game library loader, starter list). Jeopardy (milestone J, §6) built 2026-11-22. M1 not started. Replaces the 2019 AWS CodeStar template that was in this repo.
 
 ## 1. The pitch
 
@@ -11,7 +11,7 @@ This app runs the boring parts so the night stays in the room:
 - **The hat.** Draw the next game at random instead of from a real hat.
 - **Teams.** Split the room into teams in seconds.
 - **Score.** The people who played a game report the result themselves. Nobody keeps track of anyone else.
-- **Jeopardy.** Ready-made boards on any topic, so nobody spends an evening hunting for free trivia online (and everyone can play, because nobody has seen the answers).
+- **Jeopardy.** Ready-made boards of real Jeopardy clues, so nobody spends an evening hunting for free trivia online (and everyone can play, because nobody has seen the answers).
 
 A laptop plugged into the TV shows the scoreboard. Everyone joins once from their phone with a room code, Jackbox-style, and then mostly puts the phone away. Phones come out to report a result or buzz in, not to play the night on them.
 
@@ -21,7 +21,7 @@ A laptop plugged into the TV shows the scoreboard. Everyone joins once from thei
 - Phones stay in pockets most of the night. Every phone screen is one glance and one or two taps.
 - Several games can run at the same time (two 1v1s in different rooms while a team game goes on), and the TV keeps them straight.
 - Nothing is lost if someone refreshes, a phone locks, the Wi-Fi drops, or the laptop restarts.
-- Runs on a MacBook Air with no internet during the party. Starts with a double-click.
+- Runs on a MacBook Air on the house Wi-Fi (or a phone hotspot). Starts with a double-click. Internet is only needed the first time, to set up and download the Jeopardy clues.
 - Ends with exactly one individual winner, even though most games are team games: points qualify you for a winner-takes-all final showdown.
 
 **Non-goals (v1)**
@@ -43,7 +43,7 @@ A laptop plugged into the TV shows the scoreboard. Everyone joins once from thei
    - **The app fills the round.** It draws games from the hat until everyone else has a game, and the TV shows the plan, e.g. *"Round 4: 3v3 Charades · 2v2 Cornhole · 1v1 Pencil Sharpening · Free-for-all Balloon Pop"*. Anyone can re-roll a slot or swap players, then taps **Go**.
    - Phones buzz with each player's game. Everyone plays, several games at once.
    - Players report results on their phones (§5.5). When every game in the round is settled, the scoreboard updates and the next round starts.
-7. **Jeopardy.** At some point, a full Jeopardy round from a board made before the trip (§6).
+7. **Jeopardy.** At some point, a full Jeopardy round, two sides, with buzzers (§6).
 8. **Final showdown.** Everyone still within reach of first faces off; winner takes all (§5.7).
 9. **The end.** The TV crowns the Game Master. Trophy, ocean.
 
@@ -258,21 +258,35 @@ Confirmed 2026-10-31:
 
 ## 6. Jeopardy
 
-### 6.1 Making boards (at home, before the trip)
+Jeopardy is the first thing to build (decided 2026-11-22). The rest of the night can run by hand this year; the trivia is the part that's hard to do without the app. So Jeopardy works on its own, without the teams, draft and scoring from M1.
 
-- `tools/make_board.py "<topic>"` asks Claude for a full board: 6 categories × 5 clues, plus a Final Jeopardy clue, as JSON. It runs on any computer with internet and an Anthropic API key in `.env` (never committed).
-- A second pass asks Claude to check each clue: is the answer correct, unambiguous, and not given away by the category? Doubtful clues get replaced or flagged.
-- Boards are saved as JSON in `data/boards/`, readable and hand-editable. Hand-written boards use the same format.
-- The output is checked against a schema so a bad response can't break the party.
-- Since the theme is decided late, make a few general boards ahead of time, and generate a theme board on site if the Wi-Fi allows.
+### 6.1 Where the clues come from
 
-### 6.2 Playing
+- A public dataset of real Jeopardy clues ([jwolle1/jeopardy_clue_dataset](https://github.com/jwolle1/jeopardy_clue_dataset), about 554,000 clues, 1984–2026). Every clue is an open question with a real category and dollar value, already cleaned of clues that need pictures or audio.
+- The app downloads the file the first time it's needed and keeps it in `data/` (gitignored). No clues are ever committed to the repo.
+- Multiple-choice trivia sites (Open Trivia DB, The Trivia API) were tried and rejected: their questions are written for multiple choice, and the ones left after filtering were often ambiguous or obscure.
+- The public demo (M4) uses a small sample board written for the repo, not dataset clues.
 
-- The TV shows the board. The team in control calls out a clue and anyone taps it.
-- The clue appears on the TV. Teams answer out loud, the way you do now. (Phone buzzers that pick who rang in first are a later option, §9.)
-- Someone taps **Reveal**, then marks right or wrong, and points go to the team (and its members).
-- Phones show only the category and value, never the clue text or answer. Those appear on the TV.
-- Daily Double and Final Jeopardy with wagers come in M2.
+### 6.2 Making a board
+
+- **New board** picks 6 categories, each a full set of 5 clues from one real episode. Defaults: seasons from 2015 on, Single Jeopardy clues (easier). Options: Double Jeopardy (harder), or Kids/Teen tournament clues.
+- Values are shown as $200–$1000 whatever they were on air.
+- Before play, the board setup shows **category names only**, never clues, and any category can be re-rolled. Whoever sets it up can still play.
+- The board is saved in the database when play starts, so a refresh or restart never loses it.
+
+### 6.3 Playing
+
+- **Two sides**, named at the start (default *Left* and *Right*). Scores are per side, shown on the TV.
+- **The laptop runs the board** (mouse and keyboard). Phones never show a clue or an answer.
+- Click a clue: the TV shows it and the buzzers open.
+- **Buzzers:** the first side in locks the other out. Ways to buzz:
+  - a phone buzzer page (`/buzz`): pick your side, one big button;
+  - laptop keys `A` (left) and `L` (right), which also work with cheap USB or Bluetooth arcade buttons that type a key.
+- The side that buzzed gives **one** answer out loud. Click **Reveal**, the TV shows the correct response, then click **Right** (+value) or **Wrong** (−value). No steals: the answer is already on screen. If nobody buzzes, Reveal and **No points**.
+- Keys: `A`/`L` buzz, Space reveals, `R` right, `W` wrong, `N` no points, Esc cancels an accidental buzz, `U` undoes.
+- **Undo** for the last scoring click.
+- **Final Jeopardy** (from the same dataset): each side writes a wager and an answer on paper; the laptop enters both after the reveal.
+- Later: Daily Double.
 
 ## 7. Tech
 
@@ -281,7 +295,7 @@ Confirmed 2026-10-31:
 - **One state, many views:** every change goes through the server, which bumps a version number and sends the new state (or a small update) to every screen. A screen that misses updates simply asks for a full snapshot.
 - **Running on the Mac:** `start.command` (double-click) uses [uv](https://docs.astral.sh/uv/) to set up Python and the dependencies the first time (at home, with internet), then starts the server under `caffeinate` and opens `/tv` in the browser. After that first run, no internet is needed.
 - **Joining:** the TV shows a QR code with the laptop's local address (e.g. `http://192.168.1.23:8000`). The QR code is generated locally, no web service.
-- **Rental Wi-Fi backup:** some rental routers block devices from reaching each other. A MacBook Air can't share its own Wi-Fi as a hotspot, so the backup is a small travel router (about $25) that the laptop and phones all join. No internet needed. Test the house Wi-Fi on arrival.
+- **Wi-Fi:** assume the house Wi-Fi works. Backup: a phone's mobile hotspot that the laptop and the other phones join. Test on arrival that phones can reach the laptop (some routers block that).
 - **Privacy:** the repo is public. Real names, scores, past winners, your own game list and photos all live in `data/`, which is gitignored. Examples and tests use made-up names.
 
 ### 7.1 Data model
@@ -325,14 +339,15 @@ SQLite, one file on the laptop (`data/gamemaster.db`, gitignored). Schema change
 
 | # | What | Done when |
 |---|---|---|
+| **J** | Jeopardy first (§6): clue download, board maker with re-roll, two sides, TV board, laptop controls, phone and key buzzers with lockout, Final Jeopardy. | A full board plays end to end on the TV with two phone buzzers. |
 | **M0** | Skeleton: server, TV lobby with QR code, phones join, reconnect after refresh, state survives a restart. `start.command` works on the Mac. | You can join from your phone, refresh, restart the laptop, and still be in. |
 | **M1** | The core night: draft, flag ceremony, setlist and rounds (challenges, fill, review), final showdown, hat, teams, games at the same time, phone reporting with disputes, voting on judged games, going to bed, scoring, TV scoreboard, party controls, the final crown. | A full fake party (§8) runs clean, and a short real test with a few phones works. |
-| **M2** | Jeopardy: board maker, checker, TV board, play flow, Daily Double, Final Jeopardy. | Two generated boards played end to end. |
+| **M2** | Jeopardy extras: Daily Double, tying Jeopardy into the M1 teams and per-player points. | A Jeopardy round counts toward the night's scores. |
 | **M3** | Polish: picks and the Best guesser board, Mario Party board look for the scoreboard, theme colors, sounds. | It looks like a party, not a spreadsheet. |
 | **M4** | Showcase: README with screenshots, a demo mode with simulated players for mferet.com, CI. | Anyone can see it working without a party. |
-| **Later** | Phone buzzers for Jeopardy (first-in with lockout), other trivia formats, a bracket for 1v1 tournaments. | |
+| **Later** | Other trivia formats, a bracket for 1v1 tournaments. | |
 
-**For this year's party** (date not set yet): M0 + M1 are the must-haves. M2 if time allows. M3 can grow every year.
+**For this year's party** (date not set yet): J is the must-have; the rest of the night runs by hand. M1 if time allows. M3 can grow every year.
 
 ## 10. Decisions
 
@@ -353,4 +368,7 @@ Settled 2026-10-31:
 - **Betting:** optional picks before each round's games start, bragging rights only, never counted toward the Game Master.
 - **Database:** SQLite tables as in §7.1; scores always computed from results.
 - **No hall of fame.** Past champions are already on the trophy.
-- **Party date:** not known yet, so M0 + M1 come first regardless.
+- **Party date:** not known yet.
+
+Settled 2026-11-22:
+- **Jeopardy first**, standalone: two sides, laptop runs the board, open questions (no multiple choice) from the real-clue dataset, phone + key buzzers. The rest of this year's night runs by hand.

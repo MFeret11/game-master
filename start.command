@@ -1,7 +1,8 @@
 #!/bin/bash
 # Game Master: double-click this on the Mac to start the party.
 #
-# First run (at home, with internet): installs uv, Python and the libraries.
+# First run (at home, with internet): installs uv, Python and the libraries,
+# and downloads the Jeopardy clues.
 # After that it needs no internet. Keeps the Mac awake while it runs.
 # Close this window to stop.
 
@@ -19,11 +20,16 @@ fi
 
 PORT="${GM_PORT:-8000}"
 
-# Open the TV page once the server is up.
+# First run: get the Jeopardy clues now, while there's internet (about 80 MB).
+if [ ! -f data/clues.db ]; then
+  uv run --no-dev --frozen python -m gamemaster.clues || echo "Skipped the clue download. Jeopardy will try again when you make a board."
+fi
+
+# Open the Jeopardy page once the server is up.
 (
   for _ in $(seq 1 60); do
     if curl -s "http://localhost:$PORT/api/info" >/dev/null 2>&1; then
-      open "http://localhost:$PORT/tv"
+      open "http://localhost:$PORT/jeopardy"
       exit 0
     fi
     sleep 1

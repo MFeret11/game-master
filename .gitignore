@@ -1,7 +1,8 @@
-# Party data: real names, scores, your own game list. Never committed.
+# Party data: real names, scores, your own game list, the downloaded
+# Jeopardy clues. Never committed.
 data/
 
-# Secrets (the Anthropic API key for Jeopardy boards)
+# Secrets
 .env
 
 # Python
